@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "133723485446",
+    "project_id": "skills-audit-system-cfa90",
+    "storage_bucket": "skills-audit-system-cfa90.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:133723485446:android:e51ac1d62e8669763c9a87",
+        "android_client_info": {
+          "package_name": "com.example.skills_audit_system"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD3yOC-9K2SxU6OjH9vzVZxCB-LvGKXdUE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
