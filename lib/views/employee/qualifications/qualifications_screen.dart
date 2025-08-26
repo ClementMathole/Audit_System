@@ -3,8 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
-import 'add_qualification.dart';
+import 'qualification_details.dart';
+import 'qualification_form.dart';
 
 class QualificationsScreen extends StatefulWidget {
   const QualificationsScreen({super.key});
@@ -19,6 +19,7 @@ class _QualificationsScreenState extends State<QualificationsScreen> {
   @override
   Widget build(BuildContext context) {
     if (user == null) {
+      // Purpose: Show a message when the user is not logged in
       return const Scaffold(body: Center(child: Text("User not logged in.")));
     }
 
@@ -29,7 +30,7 @@ class _QualificationsScreenState extends State<QualificationsScreen> {
         actions: [
           IconButton(
             icon: const Icon(CupertinoIcons.add, size: 27),
-            onPressed: () => Get.to(() => const AddQualificationForm()),
+            onPressed: () => Get.to(() => const QualificationForm()),
           ),
         ],
       ),
@@ -42,16 +43,19 @@ class _QualificationsScreenState extends State<QualificationsScreen> {
                 .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
+            // Purpose: Show a loading indicator while waiting for data
             return const Center(child: CircularProgressIndicator());
           }
 
           if (snapshot.hasError) {
+            // Purpose: Show an error message if something goes wrong
             return Center(child: Text("Error: ${snapshot.error}"));
           }
 
           final docs = snapshot.data?.docs ?? [];
 
           if (docs.isEmpty) {
+            // Purpose: Show a message when no qualifications are found
             return const Center(child: Text("No qualifications submitted."));
           }
 
@@ -59,8 +63,6 @@ class _QualificationsScreenState extends State<QualificationsScreen> {
             itemCount: docs.length,
             itemBuilder: (context, index) {
               final data = docs[index].data() as Map<String, dynamic>;
-
-              // Defensive checks
               final qualificationName = data['qualificationName'] ?? 'Unknown';
               final institution = data['institution'] ?? 'Unknown';
               final year = data['year']?.toString() ?? 'Unknown';
@@ -78,7 +80,8 @@ class _QualificationsScreenState extends State<QualificationsScreen> {
               }
 
               return Card(
-                margin: const EdgeInsets.all(10),
+                elevation: 0,
+                margin: const EdgeInsets.all(18),
                 child: ListTile(
                   title: Text(qualificationName),
                   subtitle: Column(
@@ -96,6 +99,15 @@ class _QualificationsScreenState extends State<QualificationsScreen> {
                       ),
                     ],
                   ),
+                  onTap: () {
+                    // Purpose: Navigate to the qualification details page
+                    Get.to(
+                      () => QualificationDetails(
+                        docId: docs[index].id,
+                        data: data,
+                      ),
+                    );
+                  },
                 ),
               );
             },

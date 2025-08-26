@@ -6,14 +6,17 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class AddQualificationForm extends StatefulWidget {
-  const AddQualificationForm({super.key});
+class QualificationForm extends StatefulWidget {
+  final String? docId; // if null -> Add, else -> Edit
+  final Map<String, dynamic>? existingData;
+
+  const QualificationForm({super.key, this.docId, this.existingData});
 
   @override
-  State<AddQualificationForm> createState() => _AddQualificationFormState();
+  State<QualificationForm> createState() => _QualificationFormState();
 }
 
-class _AddQualificationFormState extends State<AddQualificationForm> {
+class _QualificationFormState extends State<QualificationForm> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _qualificationController =
       TextEditingController();
@@ -24,8 +27,28 @@ class _AddQualificationFormState extends State<AddQualificationForm> {
   File? selectedFile;
   bool isUploading = false;
 
-  // Pick year
+  @override
+  void initState() {
+    // Name: initState
+    // Purpose: Initialize form fields with existing data if available
+    // Parameters: None
+    // Returns: None
+    super.initState();
+    if (widget.existingData != null) {
+      // Populate fields with existing data
+      _qualificationController.text =
+          widget.existingData!['qualificationName'] ?? '';
+      _institutionController.text = widget.existingData!['institution'] ?? '';
+      _serialNumberController.text = widget.existingData!['serialNumber'] ?? '';
+      selectedYear = widget.existingData!['year'];
+    }
+  }
+
   Future<void> _pickYear() async {
+    // Name: _pickYear
+    // Purpose: Show a year picker dialog
+    // Parameters: None
+    // Returns: None
     final today = DateTime.now();
     final picked = await showDatePicker(
       context: context,
@@ -37,39 +60,42 @@ class _AddQualificationFormState extends State<AddQualificationForm> {
     if (picked != null) setState(() => selectedYear = picked.year);
   }
 
-  // Pick file
   Future<void> _pickFile() async {
+    // Name: _pickFile
+    // Purpose: Show a file picker dialog
+    // Parameters: None
+    // Returns: None
     final result = await FilePicker.platform.pickFiles(type: FileType.any);
     if (result != null && result.files.single.path != null) {
+      // Purpose: Set the selected file
       setState(() => selectedFile = File(result.files.single.path!));
     }
   }
 
-  // Convert file to Base64
   Future<String?> _fileToBase64(File file) async {
+    // Name: _fileToBase64
+    // Purpose: Convert a file to a Base64 string
+    // Parameters: File file - the file to convert
+    // Returns: Future<String?> - the Base64 string or null if failed
     try {
       final bytes = await file.readAsBytes();
       return base64Encode(bytes);
-    } catch (e) {
+    } catch (_) {
       return null;
     }
   }
 
   Future<void> _submitForm() async {
+    // Name: _submitForm
+    // Purpose: Submit the qualification form
+    // Parameters: None
+    // Returns: None
     if (!_formKey.currentState!.validate()) return;
     if (selectedYear == null) {
+      // Purpose: Show an error message if year is not selected
       Get.snackbar(
-        'Error',
-        'Please select a year',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-      return;
-    }
-    if (selectedFile == null) {
-      Get.snackbar(
-        'Error',
-        'Please select a certificate',
+        "Error",
+        "Please select a year",
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
@@ -81,50 +107,78 @@ class _AddQualificationFormState extends State<AddQualificationForm> {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
 
-    final base64File = await _fileToBase64(selectedFile!);
-    if (base64File == null) {
-      Get.snackbar(
-        'Error',
-        'Failed to encode file',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-      setState(() => isUploading = false);
-      return;
+    String? base64File;
+    if (selectedFile != null) {
+      // Purpose: Convert the selected file to a Base64 string
+      base64File = await _fileToBase64(selectedFile!);
+      if (base64File == null) {
+        // Purpose: Show an error message if file encoding fails
+        Get.snackbar(
+          "Error",
+          "Failed to encode file",
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+        setState(() => isUploading = false);
+        return;
+      }
     }
 
-    await FirebaseFirestore.instance.collection('qualifications').add({
+    final data = {
+      // Purpose: Prepare the qualification data for submission
       'userId': user.uid,
       'qualificationName': _qualificationController.text.trim(),
       'institution': _institutionController.text.trim(),
       'year': selectedYear,
       'serialNumber': _serialNumberController.text.trim(),
-      'certificate': base64File,
-      'fileName': selectedFile!.path.split('/').last,
-      'verificationStatus': 'Pending',
-      'createdAt': Timestamp.now(),
-    });
+      'updatedAt': Timestamp.now(),
+    };
 
-    setState(() {
-      isUploading = false;
-      _qualificationController.clear();
-      _institutionController.clear();
-      selectedYear = null;
-      selectedFile = null;
-    });
+    if (base64File != null) {
+      // Purpose: Include file data if a new file was selected
+      data['certificate'] = base64File;
+      data['fileName'] = selectedFile!.path.split('/').last;
+    }
 
-    Get.snackbar(
-      'Success',
-      'Qualification added',
-      backgroundColor: Colors.green,
-      colorText: Colors.white,
-    );
+    if (widget.docId == null) {
+      // Purpose: Add a new qualification
+      await FirebaseFirestore.instance.collection('qualifications').add({
+        ...data,
+        'verificationStatus': 'Pending',
+        'createdAt': Timestamp.now(),
+      });
+      Get.snackbar(
+        "Success",
+        "Qualification added",
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+    } else {
+      // Purpose: Update/Edit an existing qualification
+      await FirebaseFirestore.instance
+          .collection('qualifications')
+          .doc(widget.docId)
+          .update(data);
+      Get.snackbar(
+        "Success",
+        "Qualification updated",
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+    }
+
+    setState(() => isUploading = false);
+    Get.back();
   }
 
   @override
   Widget build(BuildContext context) {
+    final isEdit = widget.docId != null;
+
     return Scaffold(
-      appBar: AppBar(title: const Text("Add Qualification")),
+      appBar: AppBar(
+        title: Text(isEdit ? "Edit Qualification" : "Add Qualification"),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Form(
@@ -186,7 +240,9 @@ class _AddQualificationFormState extends State<AddQualificationForm> {
                         child: Text(
                           selectedFile != null
                               ? selectedFile!.path.split('/').last
-                              : "Tap to upload certificate",
+                              : (isEdit
+                                  ? "Tap to change certificate (optional)"
+                                  : "Tap to upload certificate"),
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             color:
@@ -214,8 +270,20 @@ class _AddQualificationFormState extends State<AddQualificationForm> {
               ),
               const SizedBox(height: 30),
               ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size(double.infinity, 50),
+                  backgroundColor: Colors.blue,
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                  textStyle: const TextStyle(fontSize: 16),
+                ),
                 onPressed: isUploading ? null : _submitForm,
-                child: Text(isUploading ? "Uploading..." : "Submit"),
+                child: Text(
+                  isUploading ? "Uploading..." : (isEdit ? "Update" : "Submit"),
+                ),
               ),
             ],
           ),

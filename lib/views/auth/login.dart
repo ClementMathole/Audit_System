@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:skills_audit_system/views/auth/forgot_password.dart';
 import 'package:skills_audit_system/views/auth/signup.dart';
-
 import '../../widgets/elevated_button.dart';
 import '../../widgets/text_form_field.dart';
 
@@ -24,7 +23,7 @@ class _LoginState extends State<Login> {
     return Scaffold(
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.all(40),
+          padding: EdgeInsets.all(20),
           child: Form(
             key: _formKey,
             child: Column(
@@ -43,6 +42,10 @@ class _LoginState extends State<Login> {
                   label: "Email",
                   keyboardType: TextInputType.emailAddress,
                   validator: (value) {
+                    // Name: validator
+                    // Purpose: Validate the email input
+                    // Parameters: String? value
+                    // Returns: String? (error message or null)
                     if (value == null || value.isEmpty) {
                       return 'Please enter your email';
                     }
@@ -58,6 +61,10 @@ class _LoginState extends State<Login> {
                   label: "Password",
                   obscureText: true,
                   validator: (value) {
+                    // Name: validator
+                    // Purpose: Validate the password input
+                    // Parameters: String? value
+                    // Returns: String? (error message or null)
                     if (value == null || value.isEmpty) {
                       return 'Please enter your password';
                     }
@@ -68,7 +75,12 @@ class _LoginState extends State<Login> {
                 PrimaryButton(
                   text: "Login",
                   onPressed: () async {
+                    // Name: onPressed
+                    // Purpose: Handle login button press
+                    // Parameters: None
+                    // Returns: Future<void>
                     if (_formKey.currentState!.validate()) {
+                      // Purpose: Attempt to sign in the user
                       try {
                         await FirebaseAuth.instance.signInWithEmailAndPassword(
                           email: _emailController.text,

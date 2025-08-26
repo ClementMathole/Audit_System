@@ -8,6 +8,14 @@ class CustomTextFormField extends StatelessWidget {
   final TextInputType keyboardType;
 
   const CustomTextFormField({
+    // Name: CustomTextFormField
+    // Purpose: Constructor for CustomTextFormField
+    // Parameters:
+    //   - Key? key: The widget key
+    //   - TextEditingController controller: The text controller for the field
+    //   - String label: The label text for the field
+    //   - String? Function(String?)? validator: The validation function
+    //   - bool obscureText: Whether to obscure the text (for passwords)
     super.key,
     required this.controller,
     required this.label,

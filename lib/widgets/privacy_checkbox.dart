@@ -9,6 +9,12 @@ class PrivacyPolicyCheckbox extends StatefulWidget {
   final bool initialValue;
 
   const PrivacyPolicyCheckbox({
+    // Name: PrivacyPolicyCheckbox
+    // Purpose: Constructor for PrivacyPolicyCheckbox
+    // Parameters:
+    //   - Key? key: The widget key
+    //   - ValueChanged<bool>? onChanged: Callback when the checkbox state changes
+    //   - bool initialValue: The initial value of the checkbox
     super.key,
     this.onChanged,
     this.initialValue = false,
@@ -26,6 +32,10 @@ class _PrivacyPolicyCheckboxState extends State<PrivacyPolicyCheckbox>
 
   @override
   void initState() {
+    // Name: initState
+    // Purpose: Initialize the state and animation controllers
+    // Parameters: None
+    // Returns: None
     super.initState();
     _accepted = widget.initialValue;
 
@@ -41,21 +51,35 @@ class _PrivacyPolicyCheckboxState extends State<PrivacyPolicyCheckbox>
 
   @override
   void dispose() {
+    // Name: dispose
+    // Purpose: Clean up the animation controller
+    // Parameters: None
+    // Returns: None
     _animController.dispose();
     super.dispose();
   }
 
   void _toggleAccepted() {
+    // Name: _toggleAccepted
+    // Purpose: Toggle the accepted terms state
+    // Parameters: None
+    // Returns: None
     setState(() {
+      // Purpose: Update the accepted terms state
       _accepted = !_accepted;
     });
     widget.onChanged?.call(_accepted);
     if (_accepted) {
+      // Purpose: Trigger the animation when accepted
       _animController.forward().then((_) => _animController.reverse());
     }
   }
 
   void _openPolicy() {
+    // Name: _openPolicy
+    // Purpose: Navigate to the Privacy Policy screen
+    // Parameters: None
+    // Returns: None
     Navigator.of(
       context,
     ).push(MaterialPageRoute(builder: (_) => PrivacyPolicyScreen()));

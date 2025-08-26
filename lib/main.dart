@@ -6,6 +6,10 @@ import 'package:skills_audit_system/wrapper.dart';
 import 'firebase_options.dart';
 
 void main() async {
+  // Name: main
+  // Purpose: Entry point of the application
+  // Parameters: None
+  // Returns: None
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);

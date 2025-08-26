@@ -19,6 +19,7 @@ class _VerifyEmailState extends State<VerifyEmail> {
 
   @override
   void initState() {
+    // Purpose: Initialize the state and send verification email
     super.initState();
     _sendVerificationEmail();
     _startVerificationTimer();
@@ -26,15 +27,21 @@ class _VerifyEmailState extends State<VerifyEmail> {
 
   @override
   void dispose() {
+    // Purpose: Dispose of the timer when the widget is disposed
     _verificationTimer?.cancel();
     super.dispose();
   }
 
   Future<void> _sendVerificationEmail() async {
+    // Name: _sendVerificationEmail
+    // Purpose: Send a verification email to the user
+    // Parameters: None
+    // Returns: Future<void>
     if (_emailSent) return;
 
     final user = FirebaseAuth.instance.currentUser;
     if (user != null && !user.emailVerified) {
+      // Purpose: Send email verification
       await user.sendEmailVerification();
       setState(() {
         _emailSent = true;
@@ -43,11 +50,16 @@ class _VerifyEmailState extends State<VerifyEmail> {
   }
 
   void _startVerificationTimer() {
+    // Name: _startVerificationTimer
+    // Purpose: Start the email verification countdown timer
+    // Parameters: None
+    // Returns: void
     _verificationTimer = Timer.periodic(Duration(seconds: 1), (timer) async {
       await FirebaseAuth.instance.currentUser?.reload();
       final user = FirebaseAuth.instance.currentUser;
 
       if (user != null && user.emailVerified) {
+        // Purpose: User email is verified
         timer.cancel();
         Get.offAll(Wrapper());
         Get.snackbar(
@@ -59,10 +71,12 @@ class _VerifyEmailState extends State<VerifyEmail> {
       }
 
       setState(() {
+        // Purpose: Update the countdown timer
         _secondsRemaining -= 1;
       });
 
       if (_secondsRemaining <= 0) {
+        // Purpose: Time expired, navigate back to signup
         timer.cancel();
         _navigateBackToSignUp();
       }
@@ -70,6 +84,10 @@ class _VerifyEmailState extends State<VerifyEmail> {
   }
 
   void _navigateBackToSignUp() {
+    // Name: _navigateBackToSignUp
+    // Purpose: Navigate back to the signup screen
+    // Parameters: None
+    // Returns: void
     Get.offAll(Signup());
     Get.snackbar(
       'Time Expired',
@@ -87,7 +105,7 @@ class _VerifyEmailState extends State<VerifyEmail> {
       ),
       body: Center(
         child: Padding(
-          padding: EdgeInsets.all(30),
+          padding: EdgeInsets.all(20),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:skills_audit_system/views/auth/login.dart';
 import 'package:skills_audit_system/widgets/elevated_button.dart';
-
 import '../../widgets/text_form_field.dart';
 
 class ForgotPassword extends StatefulWidget {
@@ -18,6 +17,10 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   final TextEditingController _emailController = TextEditingController();
 
   reset() async {
+    // Name: reset()
+    // Purpose: Send a password reset email to the user
+    // Parameters: None
+    // Returns: Future<void>
     await FirebaseAuth.instance.sendPasswordResetEmail(
       email: _emailController.text,
     );
@@ -29,12 +32,12 @@ class _ForgotPasswordState extends State<ForgotPassword> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         leading: IconButton(
-          icon: Icon(CupertinoIcons.chevron_back, size: 30),
+          icon: Icon(CupertinoIcons.chevron_back, size: 27),
           onPressed: () => Navigator.pop(context),
         ),
       ),
       body: Padding(
-        padding: EdgeInsets.all(40),
+        padding: EdgeInsets.all(20),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -61,6 +64,10 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                   controller: _emailController,
                   label: "Email",
                   validator: (value) {
+                    // Name: validator
+                    // Purpose: Validate the email input
+                    // Parameters: String? value
+                    // Returns: String? (error message or null)
                     if (value == null || value.isEmpty) {
                       return 'Please enter your email';
                     }
@@ -86,6 +93,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                   text: 'Reset Password',
                   onPressed: () {
                     if (_emailController.text.isNotEmpty) {
+                      // Purpose: Trigger password reset
                       reset();
                       Get.snackbar(
                         'Success',

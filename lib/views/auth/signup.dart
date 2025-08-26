@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:skills_audit_system/wrapper.dart';
 import 'package:skills_audit_system/widgets/privacy_checkbox.dart';
-
 import '../../widgets/text_form_field.dart';
 
 class Signup extends StatefulWidget {
@@ -24,6 +23,10 @@ class _SignupState extends State<Signup> {
   bool accepted = false;
 
   Future<void> _signupUser() async {
+    // Name: _signupUser
+    // Purpose: Sign up a new user
+    // Parameters: None
+    // Returns: Future<void>
     final name = _nameController.text.trim();
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
@@ -33,6 +36,7 @@ class _SignupState extends State<Signup> {
         email.isEmpty ||
         password.isEmpty ||
         confirmPassword.isEmpty) {
+      // Purpose: Check for empty fields
       Get.snackbar(
         'Error',
         'All fields are required',
@@ -44,6 +48,7 @@ class _SignupState extends State<Signup> {
     }
 
     if (password != confirmPassword) {
+      // Purpose: Check if passwords match
       Get.snackbar(
         'Error',
         'Passwords do not match',
@@ -55,6 +60,7 @@ class _SignupState extends State<Signup> {
     }
 
     if (password.length < 6) {
+      // Purpose: Check password length
       Get.snackbar(
         'Error',
         'Password must be at least 6 characters long',
@@ -66,6 +72,7 @@ class _SignupState extends State<Signup> {
     }
 
     if (!GetUtils.isEmail(email)) {
+      // Purpose: Check if email is valid
       Get.snackbar(
         'Error',
         'Please enter a valid email address',
@@ -77,12 +84,14 @@ class _SignupState extends State<Signup> {
     }
 
     try {
+      // Purpose: Create user with email and password
       UserCredential userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(
             email: _emailController.text.trim(),
             password: _passwordController.text.trim(),
           );
       if (userCredential.user != null) {
+        // Purpose: Create user data in Firestore
         await _createUserData(userCredential.user!);
       }
 
@@ -99,6 +108,10 @@ class _SignupState extends State<Signup> {
   }
 
   Future<void> _createUserData(User user) async {
+    // Name: _createUserData
+    // Purpose: Create user data in Firestore
+    // Parameters: User user
+    // Returns: Future<void>
     final usersCollection = FirebaseFirestore.instance.collection('users');
     await usersCollection.doc(user.uid).set({
       'uid': user.uid,
@@ -121,7 +134,7 @@ class _SignupState extends State<Signup> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(40),
+          padding: const EdgeInsets.all(20),
           child: Column(
             children: [
               Image.asset('assets/logo.png', width: 150),
@@ -154,6 +167,7 @@ class _SignupState extends State<Signup> {
               PrivacyPolicyCheckbox(
                 initialValue: accepted,
                 onChanged: (v) {
+                  // Purpose: Update the accepted terms state
                   setState(() => accepted = v);
                 },
               ),
