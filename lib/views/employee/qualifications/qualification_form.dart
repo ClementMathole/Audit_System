@@ -5,6 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../widgets/text_form_field.dart';
 
 class QualificationForm extends StatefulWidget {
   final String? docId; // if null -> Add, else -> Edit
@@ -147,6 +148,7 @@ class _QualificationFormState extends State<QualificationForm> {
         'verificationStatus': 'Pending',
         'createdAt': Timestamp.now(),
       });
+
       Get.snackbar(
         "Success",
         "Qualification added",
@@ -159,6 +161,7 @@ class _QualificationFormState extends State<QualificationForm> {
           .collection('qualifications')
           .doc(widget.docId)
           .update(data);
+
       Get.snackbar(
         "Success",
         "Qualification updated",
@@ -177,6 +180,7 @@ class _QualificationFormState extends State<QualificationForm> {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: Text(isEdit ? "Edit Qualification" : "Add Qualification"),
       ),
       body: Padding(
@@ -185,9 +189,9 @@ class _QualificationFormState extends State<QualificationForm> {
           key: _formKey,
           child: ListView(
             children: [
-              TextFormField(
+              CustomTextFormField(
                 controller: _qualificationController,
-                decoration: const InputDecoration(labelText: "Qualification"),
+                label: "Qualification",
                 validator:
                     (value) =>
                         value == null || value.isEmpty
@@ -195,9 +199,9 @@ class _QualificationFormState extends State<QualificationForm> {
                             : null,
               ),
               const SizedBox(height: 20),
-              TextFormField(
+              CustomTextFormField(
                 controller: _institutionController,
-                decoration: const InputDecoration(labelText: "Institution"),
+                label: "Institution",
                 validator:
                     (value) =>
                         value == null || value.isEmpty
@@ -209,9 +213,11 @@ class _QualificationFormState extends State<QualificationForm> {
                 onTap: _pickYear,
                 child: InputDecorator(
                   decoration: InputDecoration(
-                    labelText: "Year",
+                    fillColor: const Color.fromARGB(128, 238, 238, 238),
+                    filled: true,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide.none,
                     ),
                   ),
                   child: Text(
@@ -257,11 +263,9 @@ class _QualificationFormState extends State<QualificationForm> {
                 ),
               ),
               const SizedBox(height: 30),
-              TextFormField(
+              CustomTextFormField(
                 controller: _serialNumberController,
-                decoration: const InputDecoration(
-                  labelText: "Certificate Serial Number",
-                ),
+                label: "Certificate Serial Number",
                 validator:
                     (value) =>
                         value == null || value.isEmpty
@@ -280,7 +284,22 @@ class _QualificationFormState extends State<QualificationForm> {
                   ),
                   textStyle: const TextStyle(fontSize: 16),
                 ),
-                onPressed: isUploading ? null : _submitForm,
+                onPressed: () {
+                  if (isUploading) return;
+
+                  if (_formKey.currentState!.validate()) {
+                    _submitForm();
+                    Navigator.of(context).pop();
+                  } else {
+                    Get.snackbar(
+                      "Error",
+                      "Please fill in all required fields",
+                      snackPosition: SnackPosition.TOP,
+                      backgroundColor: Colors.red.shade600,
+                      colorText: Colors.white,
+                    );
+                  }
+                },
                 child: Text(
                   isUploading ? "Uploading..." : (isEdit ? "Update" : "Submit"),
                 ),

@@ -75,17 +75,20 @@ class _LoginState extends State<Login> {
                 PrimaryButton(
                   text: "Login",
                   onPressed: () async {
-                    // Name: onPressed
-                    // Purpose: Handle login button press
-                    // Parameters: None
-                    // Returns: Future<void>
                     if (_formKey.currentState!.validate()) {
-                      // Purpose: Attempt to sign in the user
                       try {
-                        await FirebaseAuth.instance.signInWithEmailAndPassword(
-                          email: _emailController.text,
-                          password: _passwordController.text,
-                        );
+                        UserCredential userCredential = await FirebaseAuth
+                            .instance
+                            .signInWithEmailAndPassword(
+                              email: _emailController.text,
+                              password: _passwordController.text,
+                            );
+
+                        // Force refresh the ID token to include custom claims
+                        await userCredential.user?.getIdToken(true);
+
+                        // At this point, your admin claim is available for Wrapper
+                        // No need to navigate manually; the Wrapper streamBuilder will pick up auth state
                       } on FirebaseAuthException catch (e) {
                         String message = 'An error occurred';
                         if (e.code == 'user-not-found') {
@@ -104,6 +107,7 @@ class _LoginState extends State<Login> {
                     }
                   },
                 ),
+
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
