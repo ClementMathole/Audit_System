@@ -62,8 +62,8 @@ class CircularCountChart extends StatelessWidget {
                           value: cappedCount.toDouble(),
                           gradient: LinearGradient(
                             colors: gradientColors,
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
                           ),
                           title: "",
                           radius: 15,

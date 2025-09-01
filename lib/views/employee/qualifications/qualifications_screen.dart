@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -131,7 +133,7 @@ class _QualificationsScreenState extends State<QualificationsScreen> {
                           data['qualificationName'] ?? 'Unknown';
                       final institution = data['institution'] ?? 'Unknown';
                       final year = data['year']?.toString() ?? 'Unknown';
-                      final serialNumber = data['serialNumber'] ?? 'Unknown';
+                      // final serialNumber = data['serialNumber'] ?? 'Unknown';
                       final verificationStatus =
                           data['verificationStatus'] ?? 'Pending';
 
@@ -147,7 +149,6 @@ class _QualificationsScreenState extends State<QualificationsScreen> {
                       return InkWell(
                         borderRadius: BorderRadius.circular(16),
                         onTap: () {
-                          // Navigate to the qualification details page
                           Get.to(
                             () => QualificationDetails(
                               docId: docs[index].id,
@@ -156,12 +157,20 @@ class _QualificationsScreenState extends State<QualificationsScreen> {
                           );
                         },
                         child: Card(
-                          elevation: 0, // subtle shadow for minimal style
+                          elevation: 0,
+                          shadowColor: Colors.blueAccent.withOpacity(0.2),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
                           ),
-                          margin: const EdgeInsets.symmetric(vertical: 10),
-                          child: Padding(
+                          margin: const EdgeInsets.symmetric(
+                            vertical: 10,
+                            horizontal: 6,
+                          ),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(16),
+                              color: const Color.fromARGB(128, 245, 245, 245),
+                            ),
                             padding: const EdgeInsets.all(16),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -171,68 +180,53 @@ class _QualificationsScreenState extends State<QualificationsScreen> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Row(
-                                      children: [
-                                        const Icon(
-                                          CupertinoIcons.book_solid,
-                                          size: 20,
-                                          color: Colors.indigo,
+                                    Flexible(
+                                      child: Text(
+                                        qualificationName,
+                                        style: const TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black,
                                         ),
-                                        const SizedBox(width: 8),
-                                        Text(
-                                          qualificationName,
-                                          style: const TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w600,
-                                            color: Colors.black87,
-                                          ),
-                                        ),
-                                      ],
+                                      ),
                                     ),
                                     Container(
                                       padding: const EdgeInsets.symmetric(
                                         horizontal: 10,
-                                        vertical: 4,
+                                        vertical: 5,
                                       ),
                                       decoration: BoxDecoration(
-                                        color: statusColor.withOpacity(0.1),
-                                        borderRadius: BorderRadius.circular(8),
+                                        color: statusColor.withOpacity(0.15),
+                                        borderRadius: BorderRadius.circular(20),
+                                        border: Border.all(
+                                          color: statusColor.withOpacity(0.3),
+                                        ),
                                       ),
                                       child: Text(
                                         verificationStatus,
                                         style: TextStyle(
                                           color: statusColor,
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 10,
                                         ),
                                       ),
                                     ),
                                   ],
                                 ),
-                                const SizedBox(height: 12),
-
-                                // Details
+                                const SizedBox(height: 5),
                                 Text(
-                                  "Institution: $institution",
+                                  institution,
                                   style: const TextStyle(
-                                    color: Colors.black54,
-                                    fontSize: 14,
+                                    color: Color.fromARGB(225, 130, 130, 130),
+                                    fontSize: 13,
                                   ),
                                 ),
-                                const SizedBox(height: 4),
+                                const SizedBox(height: 5),
                                 Text(
-                                  "Year: $year",
+                                  year,
                                   style: const TextStyle(
-                                    color: Colors.black54,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  "Certificate Serial: $serialNumber",
-                                  style: const TextStyle(
-                                    color: Colors.black54,
-                                    fontSize: 14,
+                                    color: Color.fromARGB(225, 130, 130, 130),
+                                    fontSize: 13,
                                   ),
                                 ),
                               ],

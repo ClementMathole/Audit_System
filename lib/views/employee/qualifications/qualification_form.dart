@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../widgets/text_form_field.dart';
@@ -181,6 +182,10 @@ class _QualificationFormState extends State<QualificationForm> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
+        leading: IconButton(
+          icon: const Icon(CupertinoIcons.chevron_back, size: 27),
+          onPressed: () => Get.back(),
+        ),
         title: Text(isEdit ? "Edit Qualification" : "Add Qualification"),
       ),
       body: Padding(

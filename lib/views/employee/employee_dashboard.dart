@@ -120,21 +120,21 @@ class _EmployeeDashboardState extends State<EmployeeDashboard> {
                   ],
                 ),
                 CircularCountChart(
-                  collectionName: "trainings",
-                  label: "Trainings",
-                  total: 15,
-                  gradientColors: [
-                    Colors.purple,
-                    const Color.fromARGB(119, 255, 64, 128),
-                  ],
-                ),
-                CircularCountChart(
                   collectionName: "skills",
                   label: "Skills",
                   total: 20,
                   gradientColors: [
                     Colors.green,
                     const Color.fromARGB(124, 178, 255, 89),
+                  ],
+                ),
+                CircularCountChart(
+                  collectionName: "trainings",
+                  label: "Trainings",
+                  total: 15,
+                  gradientColors: [
+                    Colors.purple,
+                    const Color.fromARGB(119, 255, 64, 128),
                   ],
                 ),
               ],
